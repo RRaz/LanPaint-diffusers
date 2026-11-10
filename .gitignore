@@ -1,5 +1,17 @@
 __pycache__/
 *.pyc
-.venv/*
-*.egg-info/
+.venv/
+models/
+affinity/out/
+*.8bf
+*.res
+*.lib
+*.exp
 
+# Generated test data; the scripts and small masks stay in the archive.
+test/*.rgba16
+test/*.rgb16
+test/*-preview.png
+test/case-cpu.png
+test/Masked_Load_Me_in_Loader.png
+test/Original_No_Mask.png

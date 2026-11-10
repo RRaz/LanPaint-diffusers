@@ -103,6 +103,7 @@ class LanPaintInpaintPipeline:
         seed: int = 0,
         generator: Optional[torch.Generator] = None,
         output_type: str = "pil",
+        strength: float = 1.0,
     ) -> LanPaintOutput:
         device = self.adapter.device
         config = self.config
@@ -156,13 +157,19 @@ class LanPaintInpaintPipeline:
         timesteps, flow_ts = self.adapter.prepare_timesteps(num_inference_steps, device)
         num_steps = len(timesteps)
 
+        # A strength below 1 starts partway through the schedule, which keeps part
+        # of the source image: the usual img2img control.
+        strength = max(0.0, min(1.0, float(strength)))
+        start = 0 if strength >= 1.0 else int(round(num_steps * (1.0 - strength)))
+        start = max(0, min(start, num_steps - 1))
+
         noise = torch.randn(y_latent.shape, generator=generator, device=device, dtype=y_latent.dtype)
         latents = model_wrapper.noise_scaling(
-            flow_ts[0:1].reshape(1, 1, 1).float(), noise, y_latent
+            flow_ts[start:start + 1].reshape(1, 1, 1).float(), noise, y_latent
         )
 
         if hasattr(self.adapter.scheduler, "set_begin_index"):
-            self.adapter.scheduler.set_begin_index(0)
+            self.adapter.scheduler.set_begin_index(start)
 
         # Seed the global RNG so that LanPaint's internal randn_like /
         # MultivariateNormal.sample() calls are deterministic.
@@ -170,11 +177,13 @@ class LanPaintInpaintPipeline:
 
         with torch.no_grad():
             for i, (t, flow_t) in enumerate(
-                tqdm(zip(timesteps, flow_ts), desc="LanPaint", total=num_steps)
+                tqdm(zip(timesteps[start:], flow_ts[start:]), desc="LanPaint",
+                     total=num_steps - start)
             ):
                 flow_t_val = flow_t.item()
                 current_times = make_current_times(flow_t_val, device)
-                n_steps_override = 0 if (num_steps - i <= config.early_stop) else None
+                remaining = num_steps - (start + i)
+                n_steps_override = 0 if (remaining <= config.early_stop) else None
 
                 x0 = lanpaint(
                     x=latents,

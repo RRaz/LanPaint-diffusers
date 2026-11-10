@@ -1,5 +1,12 @@
 # LanPaint-Diffusers
 
+> **Archived project (November 2026).** This fork was used to build a LanPaint
+> filter for Affinity Photo. It is retired and not maintained. See
+> [POST-MORTEM.md](POST-MORTEM.md) for why it was canned, and
+> [README-PROJECT.md](README-PROJECT.md) for the build notes and measurements.
+> The reusable mask/composite fragment lives in
+> [RRaz/mask-blend](https://github.com/RRaz/mask-blend).
+
 Training-free diffusion inpainting and outpainting with [LanPaint](https://github.com/scraed/LanPaint), built on [Hugging Face Diffusers](https://github.com/huggingface/diffusers).
 
 ## Features

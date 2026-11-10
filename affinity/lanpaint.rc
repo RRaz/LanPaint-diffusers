@@ -1,0 +1,90 @@
+/*
+ * Resources for "LanPaint": the PiPL that makes Affinity list the filter, and
+ * the prompt dialog.
+ *
+ * The PiPL is the Depth filter's, with the name changed; its mode bitstring
+ * names 16-bit RGB and greyscale only.
+ *
+ * Byte strings in the PiPL use three-digit octal escapes: rc writes numeric
+ * literals as 16-bit words, which corrupts a byte string.
+ */
+#include <windows.h>
+
+#define IDD_PROMPT   200
+#define IDC_PROMPT   201
+#define IDC_STEPS    202
+#define IDC_GUIDANCE 203
+#define IDC_NEGATIVE 204
+#define IDC_SELECTION 205
+#define IDC_STRENGTH 206
+#define IDC_T2I      207
+#define IDC_I2I      208
+#define IDC_HISTORY  209
+#define IDD_RUN      210
+#define IDC_RUN_TEXT 211
+#define IDC_RUN_BAR  212
+16000 PIPL
+BEGIN
+    "\001\000\000\000\000\000\014\000\000\000\115\111\102\070\144\156"
+    "\151\153\000\000\000\000\004\000\000\000\115\106\102\070\115\111"
+    "\102\070\145\155\141\156\000\000\000\000\014\000\000\000\010\114"
+    "\141\156\120\141\151\156\164\000\000\000\115\111\102\070\147\164"
+    "\141\143\000\000\000\000\010\000\000\000\004\122\122\101\132\000"
+    "\000\000\115\111\102\070\163\162\145\166\000\000\000\000\004\000"
+    "\000\000\000\000\004\000\115\111\102\070\164\160\155\143\000\000"
+    "\000\000\014\000\000\000\000\000\021\000\004\122\122\101\132\000"
+    "\000\000\115\111\102\070\064\066\066\070\000\000\000\000\014\000"
+    "\000\000\120\154\165\147\151\156\115\141\151\156\000\000\115\111"
+    "\102\070\145\144\157\155\000\000\000\000\004\000\000\000\000\060"
+    "\000\000\115\111\102\070\155\164\163\150\000\000\000\000\070\000"
+    "\000\000\000\000\000\000\061\153\144\163\061\153\144\163\200\076"
+    "\101\066\060\102\061\060\101\071\055\066\062\101\064\055\064\071"
+    "\106\064\055\070\102\105\065\055\104\060\102\106\102\070\102\103"
+    "\063\103\061\103\000\000\000\000\000\000\115\111\102\070\154\142"
+    "\156\145\000\000\000\000\054\000\000\000\151\156\040\050\120\123"
+    "\110\117\120\137\111\155\141\147\145\115\157\144\145\054\040\107"
+    "\162\141\171\061\066\115\157\144\145\054\040\122\107\102\064\070"
+    "\115\157\144\145\051\000\115\111\102\070\062\063\163\155\000\000"
+    "\000\000\010\000\000\000\200\204\036\000\200\204\036\000\115\111"
+    "\102\070\171\154\154\146\000\000\000\000\004\000\000\000\200\000"
+    "\000\000\115\111\102\070\151\143\151\146\000\000\000\000\034\000"
+    "\000\000\004\004\006\000\004\004\016\000\004\004\016\000\004\004"
+    "\006\000\004\004\016\000\004\004\006\000\004\004\016\000"
+END
+
+IDD_PROMPT DIALOGEX 0, 0, 320, 244
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "LanPaint"
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT           "History", -1, 12, 10, 40, 10
+    COMBOBOX        IDC_HISTORY, 56, 8, 252, 120, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Describe what should appear in the masked area:", -1, 12, 24, 296, 10
+    EDITTEXT        IDC_PROMPT, 12, 36, 296, 44, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "What to avoid (optional):", -1, 12, 84, 296, 10
+    EDITTEXT        IDC_NEGATIVE, 12, 96, 296, 22, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "Steps", -1, 12, 128, 30, 10
+    EDITTEXT        IDC_STEPS, 44, 126, 30, 13, ES_NUMBER
+    LTEXT           "Guidance", -1, 80, 128, 42, 10
+    EDITTEXT        IDC_GUIDANCE, 124, 126, 30, 13
+    LTEXT           "Strength", -1, 160, 128, 40, 10
+    EDITTEXT        IDC_STRENGTH, 202, 126, 30, 13
+    LTEXT           "Selection: -", IDC_SELECTION, 12, 148, 296, 10
+    LTEXT           "The layer's alpha channel is the mask: 0 replaces, maximum keeps.", -1, 12, 160, 296, 10
+    CONTROL         "Image to image (strength below 1.0)", IDC_I2I, "Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP, 12, 174, 240, 12
+    CONTROL         "Text to image (ignore the layer)", IDC_T2I, "Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP, 12, 188, 240, 12
+    DEFPUSHBUTTON   "Run", IDOK, 194, 214, 54, 16
+    PUSHBUTTON      "Cancel", IDCANCEL, 254, 214, 54, 16
+END
+IDD_RUN DIALOGEX 0, 0, 250, 90
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "LanPaint"
+FONT 9, "Segoe UI"
+BEGIN
+    LTEXT           "Working...", IDC_RUN_TEXT, 12, 12, 226, 10
+    CONTROL         "", IDC_RUN_BAR, "msctls_progress32", WS_BORDER, 12, 28, 226, 12
+    LTEXT           "The layer is unchanged until the run finishes.", -1, 12, 46, 226, 10
+    PUSHBUTTON      "Cancel", IDCANCEL, 184, 66, 54, 16
+END

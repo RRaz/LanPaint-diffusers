@@ -1,0 +1,62 @@
+# LanPaint settings, beside "LanPaint.8bf".
+
+home=D:\Projects\LanPaint-diffusers
+python=D:\Projects\LanPaint-diffusers\.venv\Scripts\python.exe
+
+model=sd3
+# Optional: a local folder or a different checkpoint. Empty means fetch from
+# Hugging Face, which needs the licence accepted and a read token.
+model_id=
+
+steps=28
+guidance=7.0
+
+# Strength for Image to image: an unmasked run, with the tick set in the dialog.
+# Lower values keep more of the layer. A masked run is inpainting and always
+# uses 1.0, whatever this says; text to image ignores it too.
+strength=1.0
+
+# 1 = text to image: ignore the layer completely, even if something is painted.
+t2i=0
+
+# A run may take this long, in milliseconds.
+timeout=1800000
+
+# Images up to this area keep their own size. Anything larger is refused rather
+# than reduced: crop the layer in Affinity first, which is non-destructive.
+max_area=2097152
+
+# 0 fills the alpha in the painted area, so the result shows by itself.
+# 1 keeps the mask, leaving that area transparent for blending or a second pass.
+keep_mask=0
+
+# Pixels the edit area is grown by inside the working area, so the model's seam
+# falls outside the area that is pasted back.
+mask_grow=8
+
+# Pixels over which the blend fades from nothing at the grown mask edge to full
+# strength inside it, which hides the seam.
+blend_ramp=4
+
+# 1 = send only the area around the selection, at its own scale (for a layer
+# too large to pre-crop). 0 = send the whole layer, which must fit max_area.
+smart_crop=0
+
+# With smart_crop=1, a selection larger than this is refused, in pixels:
+# 629145 is 0.6 MP.
+selection_limit=629145
+
+# With smart_crop=1, the crop is grown to this area before the run:
+# 1048576 is 1 MP.
+crop_area=1048576
+
+# cuda or cpu. CPU works, and is about thirteen times slower per step.
+device=cuda
+
+# 1 = one sub-model on the card at a time (SD3). 2 = one layer at a time, for a
+# model bigger than the card (Z-Image). 0 = the whole pipeline on the card.
+offload=1
+
+# Written back after each run, so the next visit starts with them.
+negative=
+prompt=
